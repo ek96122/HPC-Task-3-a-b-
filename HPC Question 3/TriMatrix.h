@@ -71,6 +71,7 @@ public:
         }
         (*U2)[0]=a[0]+b[0]; //compatibility check on 1st row
         (*U2)[D-1]=a[D-1]+c[D-1];//compatibility check on last row
+        delete U;
         return U2;
     }
     
@@ -78,37 +79,47 @@ public:
     
     //Implement matrix-vector solve operation using Thomas algorithm
     
-    vector<double> operator/(vector <double> *U){
+    vector<double> operator/(vector <double> U){
         int D=diag->size();
-        vector <double> *U2;
-        vector <double> m(D-1)
-        vector <double> newdiag, newl_diag, newU, newU2
-        U2= new vector<double> (D);
+        vector <double> newdiag(D);
+        vector <double> newu_diag(D);
+        vector <double> newl_diag(D);
+        vector <double> U2(D);
+        double m;
         
-        for (int i=1; i<D; i++) {
+        newdiag[0] = (*diag)[0];
+        for (int i=1; i<D ; i++){
+            m=(*l_diag)[i-1]/newdiag[i-1];
+         
+            newdiag[i]=newdiag[i]-m*(newu_diag)[i-1];
             
-            m[i]=l_diag[i]/diag_[i-1];
-        
-            newdiag[i]=diag[i]-(m[i])*u_diag[i-1];
-       
-            newU=(*U)[i]-m[i]*((*U)[i-1]);
+            U[i]=U[i]-m*U[i-1];
+            
         }
-        newdiag[0]=diag[0];
-        newU[0]=(*U)[0];
         
+        ((U2)[D-1])=(U[D-1])/((newdiag)[D-1]);
         
-        
-        for (i=0; i<D; i++){
-            U2[i]=(newU[i])/newdiag[i];
-    
+        for (int i=D-2; i>=0; i--){
+            (U2)[i]=(U[i]-(newu_diag[i])*((U2)[i+1]))/newdiag[i];
+            //cout<<i<<" ";
+            
         }
         
         
-        for (i=D-2; i>=0; i--){
-            newU2[i]=((newU[i])-(u_diag[i])*U2[i+1])/newdiag[i];
+        cout << endl << "U2: " << endl;
+        for(int i=0; i<D; i++) cout << (U2)[i] << ", ";
+        cout<<endl;
+        
+        return U2;
+        
+        
         }
         
-    }
+        
+        
+        
+        
+        
     
     
     
@@ -125,6 +136,8 @@ public:
         
         cout << endl << "diagonal: " << endl;
         for(int i=0; i<(*diag).size(); i++) cout << (*diag)[i] << ", ";
+        cout<<endl;
+        
         cout<<endl;
         
     }
