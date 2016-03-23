@@ -45,7 +45,7 @@ int main(){
     
     vector<double> x((Nx+1));
     vector<double> u0((Nx+1));
-    vector <double> u1(Nx+1);
+    vector<double> u1(Nx+1);
     vector<double> u2(Nx+1);
    
     
@@ -60,16 +60,15 @@ int main(){
     }
     
     //Transfer entries from u0 vector to the u1 vector created earlier
+
     
-    (u1)[0]=gamma0;
-    (u1)[Nx]=gamma1;
-    
-    for (int i=1; i<Nx; i++) {
+    for (int i=0; i<Nx+1; i++) {
         
         (u1)[i] = u0[i];
     }
     
-    
+    u1[0]=gamma0;
+    u1[Nx]=gamma1;
     
     //create tridiagonal matrix using TriMatrix class constructor
     
@@ -80,10 +79,9 @@ int main(){
     
     for (double i=0; i<(T-dt); i=i+dt) {
 
-        u2=myTri/(u1);
+        u2=myTri/u1;
         u1=u2;
-        cout << i << " ";
-        
+     
     }
     
     

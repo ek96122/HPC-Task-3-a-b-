@@ -33,12 +33,12 @@ public:
         u_diag = new vector<double>(Nx);
         
         for (int i = 0; i < Nx + 1; i++){
-            (*diag)[i] = 1-2*nu;
+            (*diag)[i] = 1+2*nu;
         }
         
         for (int i = 0; i < Nx; i++){
-            (*l_diag)[i] = nu;
-            (*u_diag)[i] = nu;
+            (*l_diag)[i] = -nu;
+            (*u_diag)[i] = -nu;
         }
         (*diag)[0] = 1;
         (*diag)[Nx] = 1;
@@ -80,27 +80,31 @@ public:
     //Implement matrix-vector solve operation using Thomas algorithm
     
     vector<double> operator/(vector <double> U){
-        int D=diag->size();
+        int D = diag->size();
         vector <double> newdiag(D);
-        vector <double> newu_diag(D);
-        vector <double> newl_diag(D);
         vector <double> U2(D);
+        vector <double> low_long(D);
         double m;
         
+        for (int i = 0; i < D-1; i++){
+            low_long[i+1] = (*l_diag)[i];
+        }
+        
         newdiag[0] = (*diag)[0];
+        
         for (int i=1; i<D ; i++){
-            m=(*l_diag)[i-1]/newdiag[i-1];
+            m=low_long[i]/newdiag[i-1];
          
-            newdiag[i]=newdiag[i]-m*(newu_diag)[i-1];
+            newdiag[i]=(*diag)[i]-m*(*u_diag)[i-1];
             
             U[i]=U[i]-m*U[i-1];
             
         }
         
-        ((U2)[D-1])=(U[D-1])/((newdiag)[D-1]);
+        U2[D-1]=U[D-1]/newdiag[D-1];
         
         for (int i=D-2; i>=0; i--){
-            (U2)[i]=(U[i]-(newu_diag[i])*((U2)[i+1]))/newdiag[i];
+            U2[i]=(U[i]-(*u_diag)[i]*U2[i+1])/newdiag[i];
             //cout<<i<<" ";
             
         }
