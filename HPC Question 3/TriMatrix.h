@@ -74,6 +74,46 @@ public:
         return U2;
     }
     
+    
+    
+    //Implement matrix-vector solve operation using Thomas algorithm
+    
+    vector<double> operator/(vector <double> *U){
+        int D=diag->size();
+        vector <double> *U2;
+        vector <double> m(D-1)
+        vector <double> newdiag, newl_diag, newU, newU2
+        U2= new vector<double> (D);
+        
+        for (int i=1; i<D; i++) {
+            
+            m[i]=l_diag[i]/diag_[i-1];
+        
+            newdiag[i]=diag[i]-(m[i])*u_diag[i-1];
+       
+            newU=(*U)[i]-m[i]*((*U)[i-1]);
+        }
+        newdiag[0]=diag[0];
+        newU[0]=(*U)[0];
+        
+        
+        
+        for (i=0; i<D; i++){
+            U2[i]=(newU[i])/newdiag[i];
+    
+        }
+        
+        
+        for (i=D-2; i>=0; i--){
+            newU2[i]=((newU[i])-(u_diag[i])*U2[i+1])/newdiag[i];
+        }
+        
+    }
+    
+    
+    
+    
+    
     void displayM() {
         cout << endl << "upper diagonal: " << endl;
         for(int i=0; i<(*u_diag).size(); i++) cout << (*u_diag)[i] << ", ";
